@@ -1,6 +1,6 @@
 # Contest Management System Docker Version
 
-This version is following [ioi/cms](https://github.com/ioi/cms).
+All credits goes to [tico88612/cms-docker](https://github.com/tico88612/cms-docker) and [ioi/cms](https://github.com/ioi/cms).
 
 ## Support
 
