@@ -1,0 +1,261 @@
+version: '3.9'
+
+services:
+  cms-db: 
+    image: "postgres:14"
+    container_name: "cms-db"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+    volumes:
+      - "./data/db:/var/lib/postgresql/data"
+  cms-db-init:
+    build: 
+      context: .
+      dockerfile: images/cms-db-init/Dockerfile
+    image: "cms-db-init:latest"
+    container_name: "cms-db-init"
+    depends_on:
+      - cms-db
+    env_file: 
+      - ".env"
+      - "config/config.env"
+  cms-log:
+    build: 
+      context: .
+      dockerfile: images/cms-log/Dockerfile
+    image: "cms-log:latest"
+    container_name: "cms-log"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    expose:
+      - "29000"
+    depends_on:
+      - cms-db
+  cms-scoring:
+    build: 
+      context: .
+      dockerfile: images/cms-scoring/Dockerfile
+    image: "cms-scoring:latest"
+    container_name: "cms-scoring"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    expose:
+      - "28500"
+    depends_on:
+      - cms-db
+  cms-resource:
+    build: 
+      context: .
+      dockerfile: images/cms-resource/Dockerfile
+    image: "cms-resource:latest"
+    container_name: "cms-resource"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    expose:
+      - "28000"
+    depends_on:
+      - cms-db
+  cms-proxy:
+    build: 
+      context: .
+      dockerfile: images/cms-proxy/Dockerfile
+    image: "cms-proxy:latest"
+    container_name: "cms-proxy"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    expose:
+      - "28600"
+    depends_on:
+      - cms-db
+      - cms-web-ranking
+  cms-printing:
+    build: 
+      context: .
+      dockerfile: images/cms-printing/Dockerfile
+    image: "cms-printing:latest"
+    container_name: "cms-printing"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    expose:
+      - "25123"
+    depends_on:
+      - cms-db
+  cms-evaluation:
+    build: 
+      context: .
+      dockerfile: images/cms-evaluation/Dockerfile
+    image: "cms-evaluation:latest"
+    container_name: "cms-evaluation"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    expose:
+      - "25000"
+    depends_on:
+      - cms-db
+  cms-checker:
+    build: 
+      context: .
+      dockerfile: images/cms-checker/Dockerfile
+    image: "cms-checker:latest"
+    container_name: "cms-checker"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    expose:
+      - "22000"
+    depends_on:
+      - cms-db
+      - cms-log
+      - cms-scoring
+      - cms-resource
+      - cms-proxy
+      - cms-printing
+      - cms-evaluation
+      - cms-web-admin
+      - cms-web-ranking
+      - cms-web-contest
+      - cms-worker-0
+      - cms-worker-1
+      - cms-worker-2
+      - cms-worker-3
+        
+  # web services
+  cms-web-ranking:
+    build: 
+      context: .
+      dockerfile: images/cms-web-ranking/Dockerfile
+    image: "cms-web-ranking:latest"
+    container_name: "cms-web-ranking"
+    restart: unless-stopped
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    volumes:
+      - "./data/ranking:/cms/lib/ranking"
+    ports:
+      - "8890:8890"
+    depends_on:
+      - cms-db
+  cms-web-admin:
+    build: 
+      context: .
+      dockerfile: images/cms-web-admin/Dockerfile
+    image: "cms-web-admin:latest"
+    container_name: "cms-web-admin"
+    restart: unless-stopped
+    ports:
+      - "8889:8889"
+    expose:
+      - "21100"
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    depends_on:
+      - cms-db
+  cms-web-contest:
+    build: 
+      context: .
+      dockerfile: images/cms-web-contest/Dockerfile
+    image: "cms-web-contest:latest"
+    container_name: "cms-web-contest"
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    expose:
+      - "21000"
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    depends_on:
+      - cms-db
+
+  # workers
+  cms-worker-0:
+    build:
+      context: .
+      dockerfile: images/cms-worker/Dockerfile
+    image: "cms-worker:latest"
+    container_name: "cms-worker-0"
+    restart: unless-stopped
+    expose:
+      - "26000"
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    environment:
+      - CMS_WORKER_NAME=cms-worker-0
+      - CMS_WORKER_0=0.0.0.0
+    depends_on:
+      - cms-db
+    privileged: true
+
+  cms-worker-1:
+    build:
+      context: .
+      dockerfile: images/cms-worker/Dockerfile
+    image: "cms-worker:latest"
+    container_name: "cms-worker-1"
+    restart: unless-stopped
+    expose:
+      - "26000"
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    environment:
+      - CMS_WORKER_NAME=cms-worker-1
+      - CMS_WORKER_1=0.0.0.0
+    depends_on:
+      - cms-db
+    privileged: true
+
+  cms-worker-2:
+    build:
+      context: .
+      dockerfile: images/cms-worker/Dockerfile
+    image: "cms-worker:latest"
+    container_name: "cms-worker-2"
+    restart: unless-stopped
+    expose:
+      - "26000"
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    environment:
+      - CMS_WORKER_NAME=cms-worker-2
+      - CMS_WORKER_2=0.0.0.0
+    depends_on:
+      - cms-db
+    privileged: true
+
+  cms-worker-3:
+    build:
+      context: .
+      dockerfile: images/cms-worker/Dockerfile
+    image: "cms-worker:latest"
+    container_name: "cms-worker-3"
+    restart: unless-stopped
+    expose:
+      - "26000"
+    env_file: 
+      - ".env"
+      - "config/config.env"
+    environment:
+      - CMS_WORKER_NAME=cms-worker-3
+      - CMS_WORKER_3=0.0.0.0
+    depends_on:
+      - cms-db
+    privileged: true
