@@ -100,12 +100,30 @@ Ranking: http://localhost:8890
 
 6. Have fun!
 
-## Other & TO-DO List
+## Bugs And Fixes
 
-Pull Request Welcome!
+1. Ranking Page issue with raphael.js
 
-- [ ] GitHub Action Build & Push Image
-- [ ] Helm Chart Version (Kubernetes)
+I experienced issues when trying to reach for the ranking page.  
+
+In particular, I saw that the file lib/raphael.js was missing. In order to fix this:
+
+```bash
+docker ps
+docker exec -it <cms-web-ranking id> bash
+```
+Now that we are in cms-web-ranking docker, we need to add raphael.js into /cms/cmsranking/static/lib.
+
+In order to have an editor:
+```bash
+apt update
+apt install vim
+```
+
+Then, raphael.js can be found at https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.1/raphael.js
+
+Just copy it into the newly created file and reload the contest!
+
 
 ## Reference project
 
