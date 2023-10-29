@@ -9,6 +9,13 @@
     <h1>{% trans %}Documentation{% endtrans %}</h1>
 </div>
 
+<h2>{% trans %}Introduzione al libro del Fede Des{% endtrans %}</h2>
+<div class="row statement one_statement">
+    <div class="span9">
+    <a href="https://opencode.kazooinc.it/giochini_del_fede_intro.pdf" class="btn btn-large btn-success">{% trans %}Introduzione Libro Dei Giochini del Fede{% endtrans %}</a>
+    </div>
+</div>
+
 <h2>{% trans %}Programming languages and libraries{% endtrans %}</h2>
 
 {% if contest.languages|map("to_language")|map(attribute="source_extensions")|any("contains", ".cpp") %}
