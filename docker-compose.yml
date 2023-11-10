@@ -259,3 +259,22 @@ services:
     depends_on:
       - cms-db
     privileged: true
+
+  cms-api:
+    build:
+      context: .
+      dockerfile: images/cms-api/Dockerfile
+    image: "cms-api:latest"
+    container_name: "cms-api"
+    restart: unless-stopped
+    expose:
+      - "3030"
+    env_file: 
+      - ".env"
+      #- "config/config.env"
+    #environment:
+      #- CMS_WORKER_NAME=cms-worker-3
+      #- CMS_WORKER_3=0.0.0.0
+    depends_on:
+      - cms-db
+    privileged: true
