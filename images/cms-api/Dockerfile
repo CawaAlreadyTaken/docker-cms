@@ -15,7 +15,7 @@ RUN npm install -g typescript
 # Copia i file e le directory del progetto nella directory di lavoro del container
 COPY dependency/cms-api/ .
 
-RUN npm run build
+RUN tsc
 
 # Espone la porta 3000 per permettere l'accesso alle API
 EXPOSE 3030
