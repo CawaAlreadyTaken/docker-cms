@@ -1,5 +1,7 @@
 import { Pool, QueryResult } from 'pg';
 
+const HOST_IP = "cms-db";
+
 class PostgresConnection {
   private static instance: PostgresConnection;
   private pool: Pool;
@@ -8,7 +10,7 @@ class PostgresConnection {
   private constructor() {
     this.pool = new Pool({
       user: process.env.POSTGRES_USER,
-      host: 'localhost',
+      host: HOST_IP,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASSWORD,
       port: 5432,
