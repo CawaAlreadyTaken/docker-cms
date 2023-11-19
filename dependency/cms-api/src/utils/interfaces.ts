@@ -6,3 +6,10 @@ export interface ContestInfo {
   start: string,
   stop: string,
 }
+
+export interface SubmissionInfo {
+  id: number,
+  name: string,
+  contest_id: number,
+  count: number
+}
