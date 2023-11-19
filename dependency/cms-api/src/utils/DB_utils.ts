@@ -9,6 +9,10 @@ export default class DB_utils {
     DB_utils.postgresConnection = await PostgresConnection.getInstance();
   }
 
+  static close() {
+    DB_utils.postgresConnection.close();
+  }
+
   static async do_query(query: string, params: any[]): Promise<QueryResultBase> {
     const result: QueryResultBase = await DB_utils.postgresConnection.query(query, params);
     return result;
