@@ -1,16 +1,23 @@
 import { Request, Response, Router } from 'express';
-import prom_client from 'prom-client';
-import PostgresConnection from '../utils/PostgresConnection';
+import { register, sub_gauge } from "../metrics";
+import DB_utils from '../utils/DB_utils';
+import { SubmissionInfo } from '../utils/interfaces';
 
 const router = Router();
-const register = new prom_client.Registry();
-//register.registerMetric();
+
+async function metrics_collector() {
+  let subs: SubmissionInfo[] = await DB_utils.getSubmissionsInfo();
+  for (let sub of subs) {
+    sub_gauge.set({
+      id: sub.id,
+      name: sub.count,
+      contest_id: sub.contest_id
+    }, sub.count);
+  }
+}
 
 router.get('/', async (req: Request, res: Response) => {
-  const postgresConnection = await PostgresConnection.getInstance();
-  const query = "select id, name, contest_id, count from tasks inner join (SELECT task_id, COUNT(*) FROM submissions GROUP BY task_id) as subs on tasks.id = subs.task_id;";
-  const result = await postgresConnection.query(query, []);
-  console.log(result);
+  await metrics_collector();
   res.set("Content-Type", register.contentType);
   res.send(await register.metrics());
 });
