@@ -25,6 +25,10 @@ class PostgresConnection {
     this.client = await this.pool.connect();
   }
 
+  public close() {
+    this.client.release(true);
+  }
+
   public static async getInstance(): Promise<PostgresConnection> {
     if (!PostgresConnection.instance) {
       PostgresConnection.instance = new PostgresConnection();
@@ -39,10 +43,10 @@ class PostgresConnection {
       return result;
     } catch (e) {
       console.error(`[!] Error fetching db: ${e}`);
-    } finally {
-      this.client.release();
     }
   }
+
+
 }
 
 export default PostgresConnection;

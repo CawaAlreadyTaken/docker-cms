@@ -15,6 +15,12 @@ app.use('/api', apiRouter);
 
 DB_utils.init();
 
+process.on('SIGTERM', () => {
+  console.log("Shutting down");
+  DB_utils.close();
+  process.exit();
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
