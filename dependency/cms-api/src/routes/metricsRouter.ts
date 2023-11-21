@@ -10,7 +10,7 @@ async function metrics_collector() {
   for (let sub of subs) {
     sub_gauge.set({
       id: sub.id,
-      name: sub.count,
+      name: sub.name,
       contest_id: sub.contest_id
     }, sub.count);
   }
