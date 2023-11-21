@@ -11,5 +11,5 @@ export interface SubmissionInfo {
   id: number,
   name: string,
   contest_id: number,
-  count: number
+  count: string
 }

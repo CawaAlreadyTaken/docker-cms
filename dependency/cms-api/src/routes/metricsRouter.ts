@@ -12,7 +12,7 @@ async function metrics_collector() {
       id: sub.id,
       name: sub.name,
       contest_id: sub.contest_id
-    }, sub.count);
+    }, parseInt(sub.count));
   }
 }
 
